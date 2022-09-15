@@ -28,7 +28,7 @@ export default {
   ],
 
   js:[
-    '@/assets/css/hammer.min.js'
+    '@/assets/js/hammer.min.js'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
