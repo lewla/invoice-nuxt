@@ -65,12 +65,12 @@ export default {
   },
 
   env: {
-    apiBaseURL: 'https://mail.ko.qa'
+    apiBaseURL: 'https://api.ko.qa'
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'https://mail.ko.qa'
+    baseURL: 'https://api.ko.qa'
   },
 
   toast: {
