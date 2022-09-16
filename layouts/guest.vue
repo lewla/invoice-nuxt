@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <NavSidebar v-if="this.$store.state.auth.loggedIn"/>
     <Nuxt />
   </div>
 </template>
@@ -8,10 +7,7 @@
 <script scoped>
 import NavSidebar from '@/components/nav/sidebar.vue';
 export default {
-  components: {NavSidebar},
-  mounted() {
-    this.$store.dispatch('companies/fetchAll')
-  }
+  components: {NavSidebar}
 }
 </script>
 

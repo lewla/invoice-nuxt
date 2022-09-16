@@ -1,11 +1,11 @@
 <template>
   <NuxtLink class="button" v-if="type==='link'" :to="to">
     <span class="button__icon" v-if="icon" v-html="$feathericons[icon].toSvg()"></span>
-    <span class="button__text">{{text}}</span>
+    <span class="button__text" v-if="text">{{text}}</span>
   </NuxtLink>
   <button class="button" v-else>
     <span class="button__icon" v-if="icon" v-html="$feathericons[icon].toSvg()"></span>
-    <span class="button__text">{{text}}</span>
+    <span class="button__text" v-if="text">{{text}}</span>
   </button>
 </template>
 
@@ -57,6 +57,13 @@
   &--white {
     background: $white-color;
     color: #333;
+  }
+  &--red {
+    background: $red-color;
+    color: #fff;
+    &:hover {
+      background: $red-color-darker;
+    }
   }
   &--curved {
     border-radius: 5px;

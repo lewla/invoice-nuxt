@@ -184,6 +184,7 @@ export default {
             {id: 3, to: "/invoices", icon: "file-text", title: "Invoices"},
             {id: 2, to: "/clients", icon: "user", title: "Clients"},
             {id: 4, to: "/statistics", icon: "pie-chart", title: "Statistics"},
+            {id: 5, to: "/companies", icon: "briefcase", title: "Companies"}
           ]
         },
         {

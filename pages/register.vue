@@ -7,6 +7,7 @@
 <script>
 export default {
   name: "RegisterPage",
+  layout: 'guest',
   components: {
   },
   auth: false
