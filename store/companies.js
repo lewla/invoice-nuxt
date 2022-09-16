@@ -9,7 +9,7 @@ export const actions = {
       console.log("companies data")
       console.log(data)
       if(data.status === 200) {
-        state.commit('set', data.data)
+        state.commit('set', data.data.companies)
       }
     })
     .catch((e) => {
