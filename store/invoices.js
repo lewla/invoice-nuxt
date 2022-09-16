@@ -63,6 +63,11 @@ export const mutations = {
   }
 }
 
+export const actions = {
+  fetchAll(ctx) {
+  }
+}
+
 export const getters = () => ({
   invoice(state, id) {
     return state.list.find(e => e.id == id)

@@ -124,30 +124,39 @@ export default {
         email: this.email_prop,
         phone: this.phone_prop,
       },
-      error_fields: this.error_fields_prop,
-      required_fields: [
-        "name",
-        "country"
-      ]
+      error_fields: this.error_fields_prop
     }
   },
   methods:{
     send() {
-      console.log("Send")
-      let valid = true;
-      this.required_fields.forEach((value, index) => {
-        if(this.form_data[value] === "") {
-          valid = false;
-          console.log(value, "invalid");
-          this.addError(value, "This field is required")
+      console.log("Send");
+
+      this.$axios.post('/v1/companies/create', {
+        name: this.form_data.name,
+        address_line_1: this.form_data.address_line_1,
+        address_line_2: this.form_data.address_line_2,
+        city: this.form_data.city,
+        state: this.form_data.state,
+        postal_code: this.form_data.postal_code,
+        country: this.form_data.country,
+        extra_address_info: this.form_data.extra_address_info,
+        email: this.form_data.email,
+        phone: this.form_data.phone
+      })
+      .then((response) => {
+        console.log(response);
+        if(response.status === 200) {
+          let toast = this.$toast.success(response.data.message);
         }
+        else {
+          let toast = this.$toast.error(response.data.error);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.errormsg = error.response.data.error;
       });
-      if(valid) {
-        let toast = this.$toast.info('Creating account...')
-      }
-      else {
-        let toast = this.$toast.error('Invalid form data')
-      }
+
     },
     addError(key, message) {
       this.error_fields[key] = message;
