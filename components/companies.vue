@@ -41,7 +41,7 @@ export default {
     margin: 0px auto 10px auto;
     background-color: #ffffff;
     padding: 10px;
-    border-top: 5px solid $brand-color;
+    border-left: 5px solid $brand-color;
     text-align: left;
     &__info {
       margin: 15px 20px;

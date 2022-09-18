@@ -1,12 +1,12 @@
 <template>
   <div class="form-container">
-    <h1>Create company</h1>
-    <p>Enter your company details that will appear on invoices below</p>
+    <h1>Add a client</h1>
+    <p>Add a client to create invoices for below</p>
     <form class="form" ref="form" @submit.prevent="send" novalidate>
       <label class="form__label">
-        <span class="form__label__text">Company name</span>
-        <input v-model="form_data.name" type="text" class="form__input" />
-        <span class="form__label__error" v-if="error_fields.name">{{ error_fields.name }}</span>
+        <span class="form__label__text">Client name</span>
+        <input v-model="form_data.business_name" type="text" class="form__input" />
+        <span class="form__label__error" v-if="error_fields.business_name">{{ error_fields.business_name }}</span>
       </label>
       <label class="form__label">
         <span class="form__label__text">Address line 1</span>
@@ -44,17 +44,17 @@
         <span class="form__label__error" v-if="error_fields.extra_address_info">{{ error_fields.extra_address_info }}</span>
       </label>
       <label class="form__label">
-        <span class="form__label__text">Company email</span>
+        <span class="form__label__text">Client email</span>
         <input v-model="form_data.email" type="text" class="form__input" />
         <span class="form__label__error" v-if="error_fields.email">{{ error_fields.email }}</span>
       </label>
       <label class="form__label">
-        <span class="form__label__text">Company phone number</span>
+        <span class="form__label__text">Client phone number</span>
         <input v-model="form_data.phone" type="text" class="form__input" />
         <span class="form__label__error" v-if="error_fields.phone">{{ error_fields.phone }}</span>
       </label>
       <input type="submit" style="display: none"/>
-      <InterfaceButton icon="plus-circle" text="Create company" class="button--branded button--curved button--medium" @click.native="send"/>
+      <InterfaceButton icon="plus-circle" text="Create client" class="button--branded button--curved button--medium" @click.native="send"/>
     </form>
   </div>
 </template>
@@ -62,7 +62,7 @@
 <script scoped>
 export default {
   props: {
-    name_prop: {
+    business_name_prop: {
       type: String,
       default: ''
     },
@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       form_data: {
-        name: this.name_prop,
+        business_name: this.business_name_prop,
         address_line_1: this.address_line_1_prop,
         address_line_2: this.address_line_2_prop,
         city: this.city_prop,
@@ -131,8 +131,8 @@ export default {
     send() {
       console.log("Send");
 
-      this.$axios.post('/v1/companies/create', {
-        name: this.form_data.name,
+      this.$axios.post('/v1/clients/create', {
+        business_name: this.form_data.business_name,
         address_line_1: this.form_data.address_line_1,
         address_line_2: this.form_data.address_line_2,
         city: this.form_data.city,
@@ -147,6 +147,7 @@ export default {
         console.log(response);
         if(response.status === 200) {
           let toast = this.$toast.success(response.data.message);
+          this.$router.push({ path: "/clients/" + response.data.client.id });
         }
         else {
           let toast = this.$toast.error(response.data.error);

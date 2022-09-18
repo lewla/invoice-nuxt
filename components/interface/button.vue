@@ -77,11 +77,19 @@
   &--small {
     max-width: 100px;
   }
+  &--tiny {
+    max-width: 60px;
+  }
   &--medium {
     max-width: 250px;
   }
   &--fullwidth {
     max-width: 100%;
+  }
+  &--align-right {
+    margin-left: auto;
+    margin-right: 0px;
+    display: flex;
   }
   &__icon {
     display: flex;

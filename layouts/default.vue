@@ -9,8 +9,9 @@
 import NavSidebar from '@/components/nav/sidebar.vue';
 export default {
   components: {NavSidebar},
-  mounted() {
+  beforeMount() {
     this.$store.dispatch('companies/fetchAll')
+    this.$store.dispatch('clients/fetchAll')
   }
 }
 </script>

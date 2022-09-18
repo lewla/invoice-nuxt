@@ -1,12 +1,12 @@
 <template>
   <div class="custom-select" :class="{'custom-select--open': open}" @blur="open = false">
-    <div class="custom-select__active" @click="open = !open">
+    <div class="custom-select__active" @click="open = !open" v-if="selected">
       {{ selected.title }}
       <span v-if="open" v-html="$feathericons['chevron-up'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
       <span v-else v-html="$feathericons['chevron-down'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
     </div>
     <div class="custom-select__options" v-if="open">
-      <div class="custom-select__options__option" v-for="(option, i) of options" :key="i" @click="selected = option;open = false; $emit('input', option);" :class="{'custom-select__options__option--selected': selected.title === option.title}">
+      <div class="custom-select__options__option" v-for="(option, i) of options" :key="i" @click="selected = option;open = false; $emit('input', option);" :class="{'custom-select__options__option--selected': selected === option}">
         {{ option.title }}
       </div>
     </div>

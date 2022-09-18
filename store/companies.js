@@ -3,8 +3,8 @@ export const state = () => ({
 });
 
 export const actions = {
-  fetchAll(state) {
-    this.$axios.get('/v1/companies/me')
+  async fetchAll(state) {
+    await this.$axios.get('/v1/companies/me')
     .then((data) => {
       console.log("companies data")
       console.log(data)

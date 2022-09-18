@@ -2,6 +2,7 @@
   <div class="invoices-container">
     <div class="table-top">
       <h1 class="table-top__title">Invoices</h1>
+      <InterfaceButton type="link" to="/invoices/create" icon="plus" text="New invoice" class="button--branded button--round button--medium create-invoice-button"/>
       <div class="table-top__interface">
         <InterfaceSelect
           ref="selectStatus"
@@ -17,7 +18,7 @@
         </div>
       </div>
     </div>
-    <InterfaceTable :columns="this.columns" :data="this.data" :maxPerPage_prop="10" @toggleCheckAll="handleCheckAll" @toggleCheck="check" @open="open" @sortTable="sortTable"/>
+    <InterfaceTable :columns="this.columns" :data="this.$store.state.invoices.list" :maxPerPage_prop="10" @toggleCheckAll="handleCheckAll" @toggleCheck="check" @open="open" @sortTable="sortTable"/>
   </div>
 </template>
 
@@ -29,7 +30,6 @@ export default {
       columns: [
         {title: "Invoice No.", key: "invoiceNumber", type: "string", sortable: false, mobile: {showLabel: false}},
         {title: "Client", key: "client", type: "string", sortable: false, mobile: {showLabel: false}},
-        {title: "Power", key: "power", type: "num", sortable: true, mobile: {showLabel: false}},
         {title: "Created Date", key: "created",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
         {title: "Due Date", key: "due",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
         {title: "Total", key: "total",  type: "currency", sortable: true, mobile: {showLabel: false}},
@@ -127,15 +127,32 @@ export default {
     align-items: center;
     column-gap: 10px;
     row-gap: 10px;
+    &__buttons {
+      .button {
+      }
+    }
   }
 }
+
+.create-invoice-button {
+  width: 25%;
+}
+
 @media screen and (max-width: 650px) {
   .table-top {
     margin-top: 10px;
     flex-direction: column;
     &__interface {
       flex-direction: column;
+      &__buttons {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+      }
     }
+  }
+  .create-invoice-button {
+    width: 100%;
   }
 }
 

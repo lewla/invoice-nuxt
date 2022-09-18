@@ -2,7 +2,7 @@
   <div class="table-container">
     <table class="table">
       <tr class="table__header">
-        <th class="table__header__th checkbox-cell">
+        <th class="table__header__th checkbox-cell" v-if="showCheckboxes">
           <span class="custom-checkbox" :class="headerChecked ? 'custom-checkbox--checked' : ''" @click="tableCheckAll">
             <span v-if="headerChecked">
               <span v-html="$feathericons['check'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
@@ -24,7 +24,7 @@
         </th>
       </tr>
       <tr v-for="row in this.data.slice((currentPage-1) * maxPerPage, maxPerPage * (currentPage))" class="table__item" :class="row.checked ? 'table__item--checked' : ''" @click="open(row.id)">
-          <td class="checkbox-cell" @click.stop>
+          <td class="checkbox-cell" @click.stop v-if="showCheckboxes">
             <span class="custom-checkbox" @click.stop="check(row.id)">
               <span v-if="row.checked">
                 <span v-html="$feathericons['check'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
@@ -40,7 +40,7 @@
           </td>
         </tr>
     </table>
-    <div class="pagination">
+    <div class="pagination" v-if="numPages>1">
       <span class="page-button prev-button" @click="currentPage -= 1" v-if="currentPage > 1"><span class="page-button__icon" v-html="$feathericons['chevron-left'].toSvg()"></span></span>
       <span v-for="(page, index) in paginationList" :key="page" class="page-button" :class="{'page-button--active': page == currentPage}" @click="currentPage = page">{{page}}</span>
       <span class="page-button next-button" @click="currentPage += 1" v-if="currentPage < numPages"><span class="page-button__icon" v-html="$feathericons['chevron-right'].toSvg()"></span></span>
@@ -62,6 +62,10 @@ export default {
     title: {
       default: '',
       type: String
+    },
+    showCheckboxes: {
+      default: true,
+      type: Boolean
     },
     headerChecked_prop: {
       default: false,
@@ -235,6 +239,12 @@ export default {
         text-align: left;
       }
     }
+  }
+}
+
+.table-container {
+  &.small-table {
+    max-width: 1080px;
   }
 }
 
