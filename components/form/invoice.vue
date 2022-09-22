@@ -19,11 +19,18 @@
         </div>
         <span class="form__label__error" v-if="error_fields.client">{{ error_fields.client }}</span>
       </label>
-      <label class="form__label">
-        <span class="form__label__text">Due Date</span>
-        <input v-model="duedate" type="date" class="form__input" :class="{'form__input--error': error_fields.duedate}" @input="hideError('duedate')"/>
-        <span class="form__label__error" v-if="error_fields.duedate">{{ error_fields.duedate }}</span>
-      </label>
+      <div class="input-group">
+        <label class="form__label">
+          <span class="form__label__text">Issued Date</span>
+          <input v-model="issueddate" type="date" class="form__input" :class="{'form__input--error': error_fields.issueddate}" @input="hideError('issueddate')"/>
+          <span class="form__label__error" v-if="error_fields.issueddate">{{ error_fields.issueddate }}</span>
+        </label>
+        <label class="form__label">
+          <span class="form__label__text">Due Date</span>
+          <input v-model="duedate" type="date" class="form__input" :class="{'form__input--error': error_fields.duedate}" @input="hideError('duedate')"/>
+          <span class="form__label__error" v-if="error_fields.duedate">{{ error_fields.duedate }}</span>
+        </label>
+      </div>
       <label class="form__label">
         <span class="form__label__text">Invoice Items</span>
       </label>
@@ -32,13 +39,24 @@
           <input class="form__input new-invoice-item__item" type="text" placeholder="Item" v-model="line_items[index].item"/>
           <input class="form__input new-invoice-item__quantity" type="number" placeholder="Quantity" step="1" min="0" v-model="line_items[index].quantity"/>
           <input class="form__input new-invoice-item__price" type="number" placeholder="Price" step="0.01" v-model="line_items[index].price"/>
-          <span class="new-invoice-item__total-price">{{ calcLinePrice(index) }}</span>
+          <span class="new-invoice-item__total-price">{{ calcLinePrice(index).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
           <InterfaceButton text="" icon="trash-2" class="button--tiny button--red button--curved" @click.native="deleteItem(index)"/>
         </div>
-        <InterfaceButton type="button" text="" icon="plus" class="button--medium button--branded button--curved button--align-right add-item-button" @click.native="addItem"/>
+        <InterfaceButton type="link" text="" icon="plus" class="button--medium button--branded button--curved button--align-right add-item-button" @click.native="addItem"/>
+      </div>
+      <div class="invoice-data">
+        <div class="invoice-data__section invoice-data__subtotal">
+          <span class="invoice-data__section__label">Subtotal</span><span class="invoice-data__section__value">{{ currency }}{{ subTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+        </div>
+        <div class="invoice-data__section invoice-data__subtotal">
+          <span class="invoice-data__section__label">Tax ({{tax_percent}}%)</span><span class="invoice-data__section__value">{{ currency }}{{ taxAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+        </div>
+        <div class="invoice-data__section invoice-data__subtotal">
+          <span class="invoice-data__section__label">Total</span><span class="invoice-data__section__value">{{ currency }}{{ totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+        </div>
       </div>
       <input type="submit" style="display: none"/>
-      <InterfaceButton type="button" icon="plus-circle" text="Create Invoice" class="button--branded button--curved button--medium" @click.native="send"/>
+      <InterfaceButton type="button" icon="plus-circle" text="Create Invoice" class="button--branded button--curved button--medium" @click.prevent="send"/>
     </form>
   </div>
 </template>
@@ -74,18 +92,44 @@ export default {
     return {
       invoicenumber: this.invoicenumber_prop,
       client: this.client_prop,
+      issueddate: this.issueddate_prop,
       duedate: this.duedate_prop,
       selectedClient: undefined,
       madeSelection: false,
       errormsg: this.errormsg_prop,
       error_fields: this.error_fields_prop,
       line_items: [],
-      currency: '£'
+      currency: '£',
+      tax_percent: 20
     }
   },
   methods: {
     send() {
       console.log("Send")
+      this.$axios.post('/v1/invoices/create', {
+        client_id: this.selectedClient.id,
+        number: this.invoicenumber,
+        issue_date: this.issueddate,
+        due_date: this.duedate,
+        tax_percentage: this.tax_percent,
+        status: "draft",
+        items: JSON.stringify(this.line_items),
+        note: "",
+        internal_note: "",
+        generated_file_url: ""
+      })
+      .then((response) => {
+        console.log(response)
+        if(response.status === 200) {
+          let toast = this.$toast.success(response.data.message);
+        }
+        else {
+          let toast = this.$toast.error(response.data.error);
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     },
     addItem() {
       this.line_items.push({item: '', quantity: '1', price: ''})
@@ -97,16 +141,13 @@ export default {
       let quantity = this.line_items[index].quantity;
       let price = this.line_items[index].price;
       let total = quantity * price;
-      let pounds  = total.toString().split('.')[0] || "0";
-      let pence = total.toString().split('.')[1] || "00";
 
-      return this.currency + pounds.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + pence.padEnd(2, 0);
+      return this.currency + total.toFixed(2);
     },
     hideError(key) {
       console.log(key)
     },
     setClient(index) {
-      console.log(index);
       this.madeSelection = true;
       this.selectedClient = this.$store.state.clients.list[index];
       this.client = this.selectedClient.business_name;
@@ -119,8 +160,19 @@ export default {
     numItems() {
       return this.line_items.length
     },
-    totalPrice() {
-      return 100;
+    subTotal() {
+      let sum = 0;
+      this.line_items.forEach((item, index) => {
+        sum += (item.quantity * item.price)
+      })
+
+      return sum.toFixed(2);
+    },
+    totalPrice () {
+      return (parseFloat(this.subTotal) + parseFloat(this.taxAmount)).toFixed(2);
+    },
+    taxAmount() {
+      return ((this.tax_percent/100) * this.subTotal).toFixed(2);
     },
     clientSuggestions() {
       return this.$store.state.clients.list.filter(
@@ -215,6 +267,26 @@ export default {
   }
 }
 
+.invoice-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 220px;
+  padding: 0px;
+  margin-bottom: 20px;
+  &__section {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    justify-content: space-between;
+    &__label {
+      font-weight: 600;
+    }
+  }
+}
+
 .new-invoice-item {
   display: flex;
   flex-direction: row;
@@ -246,6 +318,10 @@ export default {
   }
 }
 
+.add-item-button {
+  width: 60px;
+}
+
 .client-input-suggestions {
   position: absolute;
   width: 100%;
@@ -259,6 +335,19 @@ export default {
     &:hover {
       background: $brand-color-faded;
     }
+    &__business-name {
+      font-weight: 600;
+    }
+  }
+}
+
+.input-group {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  .form__label {
+    width: 100%;
   }
 }
 

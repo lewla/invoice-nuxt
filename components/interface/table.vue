@@ -7,7 +7,6 @@
             <span v-if="headerChecked">
               <span v-html="$feathericons['check'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
             </span>
-            <input type="checkbox" @change="" v-model="headerChecked" />
           </span>
         </th>
         <th v-for="column in this.columns" class="table__header__th" :class="{
@@ -23,13 +22,12 @@
           </span>
         </th>
       </tr>
-      <tr v-for="row in this.data.slice((currentPage-1) * maxPerPage, maxPerPage * (currentPage))" class="table__item" :class="row.checked ? 'table__item--checked' : ''" @click="open(row.id)">
+      <tr v-for="row in this.data.slice((currentPage-1) * maxPerPage, maxPerPage * (currentPage))" class="table__item" :class="checkedList.includes(row.id) ? 'table__item--checked' : ''" @click="open(row.id)">
           <td class="checkbox-cell" @click.stop v-if="showCheckboxes">
             <span class="custom-checkbox" @click.stop="check(row.id)">
-              <span v-if="row.checked">
+              <span v-if="checkedList.includes(row.id)">
                 <span v-html="$feathericons['check'].toSvg()" style="width: 1em;display: flex;height: 1em;align-items: center;"></span>
               </span>
-              <input type="checkbox" v-model="row.checked" />
             </span>
           </td>
           <td v-for="column in columns">
@@ -90,6 +88,10 @@ export default {
     currentPage_prop: {
       default: 1,
       type: Number
+    },
+    checkedList: {
+      default: [],
+      type: Array
     }
   },
   data() {
@@ -128,7 +130,7 @@ export default {
         this.sortBy = sort;
         this.$emit('sortTable', [this.sortDesc, this.sortBy])
       }
-    },
+    }
   },
   computed: {
     numPages() {
@@ -141,9 +143,8 @@ export default {
         if(i <= this.numPages && i > 0)
           list.push(i)
       }
-      
       return list.sort((a, b) => a - b).slice(-(this.maxPagesList+2))
-    }
+    },
   },
   components: {
   }

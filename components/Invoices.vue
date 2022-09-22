@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <InterfaceTable :columns="this.columns" :data="this.$store.state.invoices.list" :maxPerPage_prop="10" @toggleCheckAll="handleCheckAll" @toggleCheck="check" @open="open" @sortTable="sortTable"/>
+    <InterfaceTable :columns="this.columns" :checkedList="this.$store.state.invoices.checked_list" :data="this.$store.state.invoices.list" :maxPerPage_prop="10" @toggleCheckAll="handleCheckAll" @toggleCheck="check" @open="open" @sortTable="sortTable"/>
   </div>
 </template>
 
@@ -28,11 +28,10 @@ export default {
   data() {
     return {
       columns: [
-        {title: "Invoice No.", key: "invoiceNumber", type: "string", sortable: false, mobile: {showLabel: false}},
-        {title: "Client", key: "client", type: "string", sortable: false, mobile: {showLabel: false}},
-        {title: "Created Date", key: "created",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
-        {title: "Due Date", key: "due",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
-        {title: "Total", key: "total",  type: "currency", sortable: true, mobile: {showLabel: false}},
+        {title: "Invoice No.", key: "number", type: "string", sortable: false, mobile: {showLabel: false}},
+        {title: "Client", key: "client_business_name", type: "string", sortable: false, mobile: {showLabel: false}},
+        {title: "Issue Date", key: "issue_date",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
+        {title: "Due Date", key: "due_date",  type: "timestamp", sortable: true, mobile: {showLabel: false}},
         {title: "Status", key: "status",  type: "string", sortable: true, mobile: {showLabel: false}},
       ],
       data: this.$store.state.invoices.list
@@ -98,6 +97,10 @@ export default {
       return list.sort((a, b) => a - b).slice(-(this.maxPagesList+2))
     }
   },
+  beforeMount() {
+    console.log("Loading invoices")
+    this.$store.dispatch('invoices/fetchAll')
+  }
 }
 </script>
 

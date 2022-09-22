@@ -2,7 +2,7 @@
   <div class="companies-container">
     <div class="companies-container__company" v-for="company in this.$store.state.companies.list">
       <div class="companies-container__company__info">
-        <h2 class="companies-container__company___info__name">{{company.name}}</h2>
+        <h2 class="companies-container__company___info__name"><NuxtLink :to="'/companies/' + company.id">{{company.name}}</NuxtLink></h2>
         <span class="companies-container__company__info__email">{{company.email}}</span>
         <span class="companies-container__company__info__phone">{{company.phone}}</span>
       </div>
@@ -25,7 +25,13 @@
 
 <script scoped>
 export default {
-  name: "Companies"
+  name: "Companies",
+  methods: {
+    openCompany(id) {
+      console.log("Opening", id)
+      this.$router.push({ path: "/companies/" + id });
+    }
+  }
 }
 </script>
 

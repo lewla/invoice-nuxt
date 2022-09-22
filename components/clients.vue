@@ -8,7 +8,7 @@
         </div>
       </div>
     </div>
-    <InterfaceTable :columns="this.columns" :data="this.$store.state.clients.list" :showCheckboxes="false" :maxPerPage_prop="10" class="small-table"/>
+    <InterfaceTable :columns="this.columns" :checkedList="[]" :data="this.$store.state.clients.list" :showCheckboxes="false" :maxPerPage_prop="10" class="small-table"/>
   </div>
 </template>
 
